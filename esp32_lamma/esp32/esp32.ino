@@ -38,8 +38,12 @@ void askLlama(String prompt) {
 
     http.addHeader("content-type", "application/json");
 
-    doc["model"] = "llama3.2:1b";
+    doc["model"] = "qwen2.5:3b";
     doc["stream"] = false;
+
+    doc["system"] = "Answer based on the validity or question in nature of the statement";
+
+    doc["options"]["temperature"] = 0.0;
 
     JsonArray messages = doc["messages"].to<JsonArray>();
     JsonObject msg1 = messages.add<JsonObject>();
@@ -50,10 +54,12 @@ void askLlama(String prompt) {
     format["type"] = "object";
 
     JsonObject properties = format["properties"].to<JsonObject>();
-    JsonObject answerProp = properties["answer"].to<JsonObject>();
-    answerProp["type"] = "boolean";
+    properties["reasoning"]["type"] = "string";
+    properties["answer"]["type"] = "boolean";
 
     JsonArray required = format["required"].to<JsonArray>();
+
+    required.add("reasoning");
     required.add("answer");
 
     String requestBody;
